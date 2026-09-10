@@ -431,13 +431,6 @@ window.PHOTOS = {
   ],
   "gym": [
     {
-      "src": "photos/gym/IMG_0755.jpg",
-      "caption": "",
-      "w": 1350,
-      "h": 1800,
-      "thumb": "photos/_thumbs/gym/IMG_0755.jpg"
-    },
-    {
       "src": "photos/gym/IMG_1353.jpg",
       "caption": "",
       "w": 1350,
@@ -638,6 +631,13 @@ window.PHOTOS = {
       "w": 1350,
       "h": 1800,
       "thumb": "photos/_thumbs/mun/IMG_0738.jpg"
+    },
+    {
+      "src": "photos/mun/IMG_0755.jpg",
+      "caption": "",
+      "w": 1350,
+      "h": 1800,
+      "thumb": "photos/_thumbs/mun/IMG_0755.jpg"
     },
     {
       "src": "photos/mun/IMG_5860%202.jpg",
