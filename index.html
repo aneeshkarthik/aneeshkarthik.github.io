@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aneesh Karthik</title>
+<meta name="description" content="Aspiring engineer — aviation, robotics, and UAVs. A photo record of what I spend my time on.">
+<meta name="color-scheme" content="dark light">
+
+<!-- Link-only: anyone with the URL sees the site, but search engines skip it.
+     Delete this line if you ever want it to appear in Google. -->
+<meta name="robots" content="noindex, nofollow">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Aneesh Karthik">
+<meta property="og:description" content="Aspiring engineer — aviation, robotics, and UAVs.">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#interests">Skip to content</a>
+
+<!-- Ambient layers: cursor spotlight sits under the content, grain sits over it. -->
+<div class="spotlight" id="spotlight" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="nav__name" href="#top">Aneesh&nbsp;Karthik</a>
+  <nav class="nav__links" aria-label="Sections">
+    <a href="#interests"><span>Interests</span></a>
+    <a href="#photolog" id="nav-photolog" hidden><span id="nav-photolog-label">Photos</span></a>
+    <a href="#facts" id="nav-facts"><span>Fun Facts</span></a>
+  </nav>
+  <button class="nav__theme" id="theme-toggle" type="button" aria-label="Switch colour theme">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+      <path class="icon-sun" d="M12 4V2m0 20v-2m8-8h2M2 12h2m13.66-5.66 1.42-1.42M4.92 19.08l1.42-1.42m0-11.32L4.92 4.92m14.16 14.16-1.42-1.42M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/>
+      <path class="icon-moon" d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/>
+    </svg>
+  </button>
+  <i class="nav__accent" aria-hidden="true"></i>
+</header>
+
+<main>
+
+  <!-- ============================ 1. HERO ============================ -->
+  <section class="hero" id="top">
+    <div class="hero__grid" id="hero-grid" aria-hidden="true"></div>
+    <div class="hero__glow" aria-hidden="true"></div>
+
+    <div class="hero__inner" id="hero-inner">
+      <p class="hero__eyebrow rise" style="--i:0">
+        <span>Portfolio</span><i class="hero__rule" aria-hidden="true"></i>
+      </p>
+      <h1 class="hero__name rise" style="--i:1" id="hero-name">Aneesh Karthik</h1>
+      <p class="hero__caption rise" style="--i:2" id="hero-caption"></p>
+      <p class="hero__tagline rise" style="--i:3" id="hero-tagline"></p>
+    </div>
+
+    <div class="hero__scroll rise" style="--i:4">
+      <a class="hero__arrow" href="#interests">
+        <span class="hero__arrow-label">See what I do</span>
+        <span class="hero__arrow-circle">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M12 5v14m0 0-6-6m6 6 6-6"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ================ 2. INTERESTS GRID + FUN FACTS ASIDE ============ -->
+  <section class="section" id="interests">
+    <i class="divider" aria-hidden="true"></i>
+
+    <div class="section__head">
+      <h2 class="section__title">Interests</h2>
+      <p class="section__intro" id="grid-intro"></p>
+    </div>
+
+    <div class="layout">
+      <div class="grid" id="grid"></div>
+
+      <aside class="aside" id="facts">
+        <div class="aside__inner">
+          <p class="aside__label">Also true</p>
+          <div class="factcar" id="factcar">
+            <p class="factcar__text" id="factcar-text"></p>
+            <div class="factcar__foot">
+              <div class="factcar__dots" id="factcar-dots" role="tablist" aria-label="Fun facts"></div>
+              <div class="factcar__arrows">
+                <button id="fact-prev" type="button" aria-label="Previous fact">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>
+                </button>
+                <button id="fact-next" type="button" aria-label="Next fact">
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <p class="aside__warn" id="facts-warn" hidden></p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ========================= 3. PHOTOLOG =========================== -->
+  <section class="section section--photolog" id="photolog" hidden>
+    <i class="divider divider--warm" aria-hidden="true"></i>
+    <div class="section__head">
+      <h2 class="section__title" id="photolog-title">Photolog</h2>
+      <p class="section__intro" id="photolog-intro"></p>
+    </div>
+    <div class="photolog" id="photolog-grid"></div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer__links" id="footer-links"></div>
+  <p class="footer__note">Built and photographed by me.</p>
+</footer>
+
+
+<!-- ======================= CAROUSEL / LIGHTBOX ======================= -->
+<div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lb-title" hidden>
+
+  <div class="lb__bar">
+    <div class="lb__titles">
+      <h3 class="lb__title" id="lb-title"></h3>
+      <p class="lb__blurb" id="lb-blurb"></p>
+    </div>
+    <button class="lb__close" id="lb-close" type="button" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <path d="M6 6l12 12M18 6 6 18"/>
+      </svg>
+    </button>
+  </div>
+
+  <figure class="lb__figure">
+    <div class="lb__stage">
+      <div class="lb__spinner" id="lb-spinner" aria-hidden="true"></div>
+      <p class="lb__error" id="lb-error" hidden>
+        This photo couldn't load.<br><span>Run <code>./update</code> if you've renamed or moved files.</span>
+      </p>
+      <img class="lb__img" id="lb-img" alt="">
+
+      <!-- Instagram-story tap zones. Real buttons, so keyboard and screen
+           readers still get proper controls even though nothing is drawn. -->
+      <button class="lb__zone lb__zone--prev" id="lb-prev" type="button" aria-label="Previous photo"></button>
+      <button class="lb__zone lb__zone--next" id="lb-next" type="button" aria-label="Next photo"></button>
+    </div>
+    <figcaption class="lb__meta">
+      <span class="lb__caption" id="lb-caption"></span>
+      <span class="lb__count" id="lb-count"></span>
+    </figcaption>
+  </figure>
+
+  <div class="lb__dots" id="lb-dots" role="tablist" aria-label="Photos"></div>
+</div>
+
+<script src="js/site.js"></script>
+<script src="js/photos.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

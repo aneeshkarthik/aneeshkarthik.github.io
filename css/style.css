@@ -1,0 +1,1165 @@
+/* ==========================================================================
+   Aneesh Karthik — personal site
+   Photo-first. Typography carries the hero; images carry everything else.
+   Motion is deliberately low-amplitude: present, never showy.
+   ========================================================================== */
+
+:root {
+  --bg:         #0b0b0d;
+  --bg-soft:    #141417;
+  --surface:    #17171b;
+  --text:       #f4f2ee;
+  --text-dim:   #a8a59f;
+  --text-faint: #6e6b65;
+  --line:       rgba(255, 255, 255, 0.11);
+  --line-soft:  rgba(255, 255, 255, 0.055);
+  --accent:     #7cc4ff;                     /* blue */
+  --accent-2:   #ff6b6b;                     /* red  */
+  --accent-dim: rgba(124, 196, 255, 0.14);
+  --accent-2-dim: rgba(255, 107, 107, 0.13);
+  --nav-bg:     rgba(11, 11, 13, 0.72);
+  --shadow:     0 24px 64px rgba(0, 0, 0, 0.6);
+
+  /* Ambient layers */
+  --spot:       rgba(124, 196, 255, 0.10);
+  --grain-op:   0.032;
+  --headline-glow: 0 0 46px rgba(226, 236, 255, 0.10);
+
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Shape of every grid tile. Photos are centre-cropped to fit it.
+     3 / 4  = standard phone portrait  (matches most of the library)
+     4 / 5  = Instagram portrait post
+     9 / 16 = Instagram story (tall; crops 3:4 photos by ~25%)
+     Change this one value to restyle the whole grid. */
+  --card-ratio: 3 / 4;
+
+  --pad: clamp(1.25rem, 5vw, 4.5rem);
+  --maxw: 1440px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Written by JS — cursor position and scroll parallax offsets. */
+  --mx: 50vw;
+  --my: 40vh;
+  --px: 0px;
+  --py: 0px;
+  --hero-shift: 0px;
+  --hero-fade: 1;
+}
+
+:root[data-theme="light"] {
+  --bg:         #fcfbf9;
+  --bg-soft:    #f1efeb;
+  --surface:    #ffffff;
+  --text:       #14130f;
+  --text-dim:   #54514a;
+  --text-faint: #8b877f;
+  --line:       rgba(0, 0, 0, 0.13);
+  --line-soft:  rgba(0, 0, 0, 0.06);
+  --accent:     #1f6feb;
+  --accent-2:   #d64545;
+  --accent-dim: rgba(31, 111, 235, 0.09);
+  --accent-2-dim: rgba(214, 69, 69, 0.10);
+  --nav-bg:     rgba(252, 251, 249, 0.78);
+  --shadow:     0 24px 64px rgba(0, 0, 0, 0.18);
+  --spot:       rgba(31, 111, 235, 0.055);
+  --grain-op:   0.02;
+  --headline-glow: none;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg:         #fcfbf9;
+    --bg-soft:    #f1efeb;
+    --surface:    #ffffff;
+    --text:       #14130f;
+    --text-dim:   #54514a;
+    --text-faint: #8b877f;
+    --line:       rgba(0, 0, 0, 0.13);
+    --line-soft:  rgba(0, 0, 0, 0.06);
+    --accent:     #1f6feb;
+    --accent-2:   #d64545;
+    --accent-2-dim: rgba(214, 69, 69, 0.10);
+    --accent-dim: rgba(31, 111, 235, 0.09);
+    --nav-bg:     rgba(252, 251, 249, 0.78);
+    --shadow:     0 24px 64px rgba(0, 0, 0, 0.18);
+    --spot:       rgba(31, 111, 235, 0.055);
+    --grain-op:   0.02;
+    --headline-glow: none;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  /* Smooth theme crossfade rather than a hard flash. */
+  transition: background-color 0.5s var(--ease), color 0.5s var(--ease);
+}
+
+body.is-locked { overflow: hidden; }
+
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  z-index: 200;
+  padding: 0.75rem 1.25rem;
+  background: var(--surface);
+}
+.skip:focus { left: 0; top: 0; }
+
+/* Content sits above the spotlight layer. */
+main, .footer, .nav { position: relative; z-index: 1; }
+
+/* ========================= Ambient: spotlight ============================ */
+
+.spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    520px circle at var(--mx) var(--my),
+    var(--spot),
+    transparent 72%
+  );
+  opacity: 0;
+  transition: opacity 0.9s var(--ease), background 0.5s var(--ease);
+}
+.spotlight.is-live { opacity: 1; }
+
+/* =========================== Ambient: grain ============================== */
+
+.grain {
+  position: fixed;
+  inset: -120%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: var(--grain-op);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grainDrift 7s steps(6) infinite;
+  will-change: transform;
+}
+
+@keyframes grainDrift {
+  0%   { transform: translate(0, 0); }
+  16%  { transform: translate(-2%, -3%); }
+  33%  { transform: translate(-4%, 2%); }
+  50%  { transform: translate(2%, -4%); }
+  66%  { transform: translate(-3%, 3%); }
+  83%  { transform: translate(3%, 1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ============================== Nav ====================================== */
+
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem var(--pad);
+  border-bottom: 1px solid transparent;
+  transition: background 0.35s var(--ease), border-color 0.35s var(--ease), padding 0.35s var(--ease);
+}
+
+.nav.is-stuck {
+  background: var(--nav-bg);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  border-bottom-color: var(--line-soft);
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+}
+
+/* Slow gradient sweep along the bottom edge, only once the nav is pinned. */
+.nav__accent {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--accent) 22%,
+    var(--accent-2) 50%,
+    var(--accent) 78%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  transition: opacity 0.5s var(--ease);
+  animation: sweep 14s linear infinite;
+}
+.nav.is-stuck .nav__accent { opacity: 0.5; }
+
+@keyframes sweep {
+  from { background-position: 120% 0; }
+  to   { background-position: -120% 0; }
+}
+
+.nav__name {
+  flex: 1;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav__links { display: flex; gap: 0.4rem; }
+
+.nav__links a {
+  position: relative;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.3s var(--ease);
+}
+.nav__links a span {
+  display: inline-block;
+  transition: letter-spacing 0.35s var(--ease);
+}
+.nav__links a:hover { color: var(--text); }
+.nav__links a:hover span { letter-spacing: 0.045em; }
+
+/* Underline draws in from the left. */
+.nav__links a::after {
+  content: "";
+  position: absolute;
+  left: 0.55rem;
+  right: 0.55rem;
+  bottom: 0.15rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease);
+}
+.nav__links a:hover::after,
+.nav__links a:focus-visible::after { transform: scaleX(1); }
+
+.nav__theme {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  color: var(--text-dim);
+  flex: none;
+  transition: color 0.25s, background 0.25s, transform 0.4s var(--ease);
+}
+.nav__theme:hover {
+  color: var(--text);
+  background: var(--line-soft);
+  transform: rotate(18deg);
+}
+
+.icon-moon { display: none; }
+:root[data-theme="light"] .icon-sun { display: none; }
+:root[data-theme="light"] .icon-moon { display: block; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .icon-sun { display: none; }
+  :root:not([data-theme]) .icon-moon { display: block; }
+}
+
+/* ============================== Hero ===================================== */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  align-items: center;
+  padding: 7rem var(--pad) 7rem;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Blueprint grid — drifts slowly, and leans a little toward the cursor. */
+.hero__grid {
+  position: absolute;
+  inset: -8%;
+  z-index: -2;
+  background-image:
+    linear-gradient(to right, var(--line-soft) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line-soft) 1px, transparent 1px);
+  background-size: 68px 68px;
+  mask-image: radial-gradient(ellipse 90% 70% at 30% 40%, #000 20%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 30% 40%, #000 20%, transparent 78%);
+  transform: translate3d(var(--px), var(--py), 0);
+  transition: transform 0.9s var(--ease);
+  animation: gridDrift 44s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes gridDrift {
+  from { background-position: 0 0; }
+  to   { background-position: 68px 44px; }
+}
+
+/* Warm counterweight low on the opposite side — the red half of the palette,
+   kept faint enough to read as temperature rather than colour. */
+.hero::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -14%;
+  bottom: -22%;
+  width: 52vw;
+  height: 52vw;
+  max-width: 640px;
+  max-height: 640px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-2-dim), transparent 66%);
+  filter: blur(24px);
+  pointer-events: none;
+  transform: translate3d(calc(var(--px) * 1.4), calc(var(--py) * 1.4), 0);
+  transition: transform 1.4s var(--ease);
+  animation: glowPulse 15s ease-in-out infinite alternate-reverse;
+}
+
+.hero__glow {
+  position: absolute;
+  z-index: -1;
+  top: -20%;
+  right: -10%;
+  width: 60vw;
+  height: 60vw;
+  max-width: 780px;
+  max-height: 780px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-dim), transparent 65%);
+  filter: blur(20px);
+  pointer-events: none;
+  /* Moves opposite the grid for a shallow sense of depth. */
+  transform: translate3d(calc(var(--px) * -1.9), calc(var(--py) * -1.9), 0);
+  transition: transform 1.2s var(--ease);
+  animation: glowPulse 12s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse {
+  from { opacity: 0.75; }
+  to   { opacity: 1; }
+}
+
+.hero__inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  /* Scroll parallax — hero text trails the page slightly. */
+  transform: translate3d(0, var(--hero-shift), 0);
+  opacity: var(--hero-fade);
+  will-change: transform, opacity;
+}
+
+/* Staggered entrance. --i is set per element in the markup. */
+.rise {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: rise 0.85s var(--ease) forwards;
+  animation-delay: calc(var(--i, 0) * 100ms + 120ms);
+}
+
+@keyframes rise {
+  to { opacity: 1; transform: none; }
+}
+
+.hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* Thin rule that draws outward from the label. */
+.hero__rule {
+  display: block;
+  height: 1px;
+  width: clamp(48px, 12vw, 160px);
+  background: linear-gradient(90deg, var(--accent), var(--accent-2) 55%, transparent);
+  opacity: 0.7;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: drawRule 1.4s var(--ease) forwards;
+  animation-delay: 0.5s;
+}
+
+@keyframes drawRule {
+  to { transform: scaleX(1); }
+}
+
+.hero__name {
+  margin: 0.7rem 0 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(3rem, 12vw, 8.6rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  /* Lifts the headline off the dark background very slightly. */
+  text-shadow: var(--headline-glow);
+}
+
+.hero__caption {
+  margin: 1rem 0 0;
+  font-family: var(--mono);
+  font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  opacity: 0.85;
+}
+
+.hero__tagline {
+  max-width: 26ch;
+  margin: 0.85rem 0 0;
+  font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+  line-height: 1.4;
+  color: var(--text-dim);
+  text-wrap: balance;
+}
+
+/* Floating label + arrow, centred at the bottom of the opening screen.
+   The wrapper owns the positioning so .rise can animate transform freely. */
+.hero__scroll {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(1.5rem, 4.5vh, 2.75rem);
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+}
+
+.hero__arrow {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--text-faint);
+  text-decoration: none;
+  transition: color 0.3s var(--ease);
+}
+
+.hero__arrow-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: letter-spacing 0.4s var(--ease);
+}
+
+.hero__arrow-circle {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--text-dim);
+  background: color-mix(in srgb, var(--surface) 35%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease),
+              box-shadow 0.4s var(--ease), background 0.3s var(--ease),
+              transform 0.2s var(--ease);
+}
+
+/* Bob applies to the inner icon so it doesn't fight the entrance animation. */
+.hero__arrow svg { animation: bob 2.6s ease-in-out infinite; }
+
+@keyframes bob {
+  0%, 100% { transform: translateY(-2px); }
+  50%      { transform: translateY(4px); }
+}
+
+.hero__arrow:hover { color: var(--text-dim); }
+.hero__arrow:hover .hero__arrow-label { letter-spacing: 0.23em; }
+.hero__arrow:hover .hero__arrow-circle {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  box-shadow: 0 0 0 4px var(--accent-dim), 0 0 28px var(--accent-dim);
+}
+.hero__arrow:active .hero__arrow-circle { transform: scale(0.94); }
+
+/* ============================ Sections =================================== */
+
+.section {
+  position: relative;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: clamp(3.5rem, 10vh, 7rem) var(--pad);
+}
+
+/* Slow-shifting gradient hairline above the Interests block. */
+.divider {
+  position: absolute;
+  top: 0;
+  left: var(--pad);
+  right: var(--pad);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent) 30%,
+    var(--accent-2) 55%,
+    transparent 85%
+  );
+  background-size: 240% 100%;
+  opacity: 0.4;
+  animation: sweep 18s linear infinite;
+}
+
+.section__head { margin-bottom: 2.75rem; }
+
+.section__title {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(2rem, 5.5vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-shadow: var(--headline-glow);
+}
+
+.section__intro {
+  max-width: 54ch;
+  margin: 0.6rem 0 0;
+  color: var(--text-dim);
+  text-wrap: pretty;
+}
+
+/* The photolog divider leans red, the interests one leans blue — a quiet
+   way to signal you've crossed into a different kind of content. */
+.divider--warm {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--accent-2) 30%,
+    var(--accent) 58%,
+    transparent 85%
+  );
+  background-size: 240% 100%;
+}
+
+::selection {
+  background: var(--accent-2-dim);
+  color: var(--text);
+}
+
+/* ===================== Layout: grid + fun-facts aside ==================== */
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.25rem, 2.5vw, 2.25rem);
+}
+
+@media (min-width: 1080px) {
+  .layout { grid-template-columns: minmax(0, 1fr) 268px; }
+}
+
+/* No fun-facts panel: the grid takes the full width at every size. */
+.layout.is-full { grid-template-columns: minmax(0, 1fr); }
+
+/* Single column: lift the facts above the grid, otherwise they'd sit below
+   seventeen cards — which is the burial we were trying to avoid. */
+@media (max-width: 1079px) {
+  .aside { order: -1; }
+}
+
+/* ========================== Interests grid =============================== */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr));
+  gap: clamp(0.6rem, 1.1vw, 0.9rem);
+}
+
+/* Two up on phones — a single 9:16 column would be ~600px tall per card,
+   which turns sixteen interests into an endless scroll. */
+@media (max-width: 680px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.card {
+  position: relative;
+  display: block;
+  aspect-ratio: var(--card-ratio);
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: var(--bg-soft);
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s var(--ease), transform 0.5s var(--ease),
+              box-shadow 0.4s var(--ease);
+}
+.card.is-in { opacity: 1; transform: none; }
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease), transform 0.7s var(--ease),
+              filter 0.45s var(--ease);
+}
+.card img.is-loaded { opacity: 1; }
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--line-soft);
+  pointer-events: none;
+}
+
+/* Title overlay — hidden until hover, per the brief. */
+.card__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  padding: 0.85rem 0.9rem;
+  /* Shorter falloff than a landscape card would need — on a 9:16 tile a
+     45% gradient would wash out half the photo. */
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.34) 26%, transparent 55%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  pointer-events: none;
+}
+
+.card__title {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 550;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: #fff;
+  text-wrap: balance;
+  transform: translateY(8px);
+  transition: transform 0.45s var(--ease);
+}
+
+.card__count {
+  flex: none;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.86);
+  padding: 0.1rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, rgba(255, 255, 255, 0.3));
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border-radius: 999px;
+  transform: translateY(8px);
+  transition: transform 0.45s var(--ease) 0.04s;
+}
+
+@media (hover: hover) {
+  .card:hover { box-shadow: var(--shadow); }
+  .card:hover img { transform: scale(1.06); filter: brightness(0.9); }
+  .card:hover .card__overlay { opacity: 1; }
+  .card:hover .card__title,
+  .card:hover .card__count { transform: none; }
+}
+
+.card:focus-visible .card__overlay { opacity: 1; }
+.card:focus-visible .card__title,
+.card:focus-visible .card__count { transform: none; }
+
+/* Touch devices have no hover, so the label has to stay put. */
+@media (hover: none) {
+  .card__overlay { opacity: 1; }
+  .card__title, .card__count { transform: none; }
+}
+
+/* Cards with no photos yet */
+
+.card--empty {
+  cursor: default;
+  background: transparent;
+  display: grid;
+  place-items: center;
+}
+.card--empty::after { box-shadow: inset 0 0 0 1px var(--line); opacity: 0.55; }
+
+.card__hint {
+  padding: 0 1rem;
+  font-size: 0.76rem;
+  line-height: 1.65;
+  text-align: center;
+  color: var(--text-faint);
+}
+.card__hint strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 550;
+  color: var(--text-dim);
+}
+.card__hint code {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  word-break: break-all;
+}
+
+/* ============================= Photolog ================================== */
+
+/* Masonry columns rather than fixed tiles — these are photos chosen for
+   their own sake, so nothing gets cropped. */
+.photolog {
+  column-count: 4;
+  column-gap: clamp(0.6rem, 1.1vw, 0.9rem);
+}
+
+@media (max-width: 1180px) { .photolog { column-count: 3; } }
+@media (max-width: 780px)  { .photolog { column-count: 2; } }
+
+.plog {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0 0 clamp(0.6rem, 1.1vw, 0.9rem);
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-soft);
+  break-inside: avoid;
+  cursor: zoom-in;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.6s var(--ease), transform 0.5s var(--ease),
+              box-shadow 0.4s var(--ease);
+}
+.plog.is-in { opacity: 1; transform: none; }
+
+.plog img {
+  width: 100%;
+  height: auto;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease), transform 0.7s var(--ease);
+}
+.plog img.is-loaded { opacity: 1; }
+
+.plog::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--line-soft);
+  pointer-events: none;
+}
+
+.plog__cap {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 2.2rem 0.85rem 0.7rem;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: #fff;
+  text-align: left;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .plog:hover { box-shadow: var(--shadow); }
+  .plog:hover img { transform: scale(1.04); }
+  .plog:hover .plog__cap { opacity: 1; }
+}
+.plog:focus-visible .plog__cap { opacity: 1; }
+@media (hover: none) { .plog__cap { opacity: 1; } }
+
+/* ====================== Fun facts (side carousel) ======================== */
+
+.aside { position: relative; }
+
+@media (min-width: 1080px) {
+  .aside__inner { position: sticky; top: 5.5rem; }
+}
+
+.aside__label {
+  margin: 0 0 0.65rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.factcar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 172px;
+  padding: 1.3rem 1.35rem 1.1rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  background: var(--bg-soft);
+  transition: border-color 0.35s var(--ease), background 0.5s var(--ease);
+}
+.factcar:hover { border-color: var(--line); }
+
+.factcar__text {
+  flex: 1;
+  margin: 0;
+  font-size: 0.97rem;
+  line-height: 1.55;
+  text-wrap: pretty;
+  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+}
+.factcar__text.is-out { opacity: 0; transform: translateY(6px); }
+.factcar__text.is-blank { color: var(--text-faint); font-style: italic; }
+
+.factcar__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.factcar__dots { display: flex; gap: 0.35rem; }
+
+.factcar__dots button {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--line);
+  transition: background 0.3s, transform 0.3s var(--ease);
+}
+.factcar__dots button:hover { background: var(--text-faint); }
+.factcar__dots button.is-on { background: var(--accent); transform: scale(1.35); }
+
+.factcar__arrows { display: flex; gap: 0.15rem; }
+
+.factcar__arrows button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  color: var(--text-faint);
+  transition: color 0.25s, background 0.25s;
+}
+.factcar__arrows button:hover { color: var(--text); background: var(--line-soft); }
+
+.aside__warn {
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.75rem;
+  border-radius: 9px;
+  border: 1px solid rgba(224, 158, 68, 0.32);
+  background: rgba(224, 158, 68, 0.08);
+  color: #e3ab63;
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+.aside__warn[hidden] { display: none; }
+
+/* ============================== Footer =================================== */
+
+.footer {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 3.5rem var(--pad) 4.5rem;
+  border-top: 1px solid var(--line-soft);
+  text-align: center;
+}
+
+.footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 1.1rem;
+}
+.footer__links a {
+  position: relative;
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--line);
+  transition: color 0.25s, border-color 0.25s;
+}
+.footer__links a:hover { color: var(--text); border-color: var(--accent); }
+
+.footer__note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-faint);
+}
+
+/* ============================= Carousel ================================== */
+
+.lb {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  /* minmax(0, …) not 1fr: a bare 1fr is minmax(auto, …), which is
+     content-sized, so percentage heights inside it can't resolve. */
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  /* Keep the counter clear of the iPhone home indicator. */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(8, 8, 9, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  transition: opacity 0.28s var(--ease);
+}
+.lb.is-open { opacity: 1; }
+.lb[hidden] { display: none; }
+
+.lb__bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.25rem clamp(1rem, 4vw, 2.5rem);
+  color: #f4f2ee;
+}
+
+.lb__titles { flex: 1; min-width: 0; }
+
+.lb__title {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.15rem, 3vw, 1.6rem);
+  letter-spacing: -0.015em;
+}
+
+.lb__blurb {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  color: #a3a09a;
+  text-wrap: pretty;
+}
+
+.lb__close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  color: #cfccc6;
+  transition: background 0.2s, color 0.2s, transform 0.3s var(--ease);
+}
+.lb__close:hover { background: rgba(255, 255, 255, 0.13); color: #fff; transform: rotate(90deg); }
+
+.lb__figure {
+  margin: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.85rem;
+  padding: 0 clamp(3.4rem, 8vw, 5.5rem);
+}
+
+.lb__stage {
+  position: relative;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* Absolutely positioned so max-width/max-height resolve against the stage's
+   used box rather than a flexible grid track. Inset 0 + margin auto centres
+   it while keeping the element tight to the photo. */
+.lb__img {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.32s var(--ease), transform 0.46s var(--ease);
+}
+.lb__img.is-loaded { opacity: 1; }
+
+.lb__error {
+  position: absolute;
+  margin: 0;
+  max-width: 30ch;
+  text-align: center;
+  color: #b9b6b0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+.lb__error[hidden] { display: none; }
+.lb__error span { color: #85827c; font-size: 0.82rem; }
+.lb__error code {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.lb__spinner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-top-color: rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.lb__spinner[hidden] { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.lb__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 1.4rem;
+  padding-bottom: 0.75rem;
+  color: #d6d3cd;
+  font-size: 0.88rem;
+  text-align: center;
+}
+.lb__count {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.76rem;
+  letter-spacing: 0.09em;
+  color: #86837d;
+}
+
+/* Tap zones: invisible, full-height, split like an Instagram story.
+   Weighted 35/65 because forward is the common direction. */
+.lb__zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 3;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.35s var(--ease);
+}
+.lb__zone[hidden] { display: none; }
+
+.lb__zone--prev { left: 0;  width: 35%; }
+.lb__zone--next { right: 0; width: 65%; }
+
+/* A faint edge wash on hover so a first-time visitor discovers the zones
+   without a permanent arrow sitting on the photo. */
+@media (hover: hover) {
+  .lb__zone--prev:hover {
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.07), transparent 62%);
+  }
+  .lb__zone--next:hover {
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.07), transparent 62%);
+  }
+}
+
+.lb__zone:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+}
+
+.lb__dots {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 1.1rem 1rem 1.5rem;
+}
+.lb__dots[hidden] { display: none; }
+
+.lb__dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.26);
+  transition: background 0.25s, transform 0.25s var(--ease);
+}
+.lb__dot:hover { background: rgba(255, 255, 255, 0.5); }
+.lb__dot.is-on {
+  background: var(--accent);
+  transform: scale(1.35);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+@media (max-width: 620px) {
+  /* Zones reach the screen edges on a phone, so the padding goes. */
+  .lb__figure { padding: 0 0.5rem; }
+}
+
+/* ============================ Reduced motion ============================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .rise, .card, .card img, .lb__img, .plog, .plog img { opacity: 1; transform: none; }
+  .hero__rule { transform: scaleX(1); }
+  .hero__inner { transform: none; opacity: 1; }
+  .grain, .spotlight { display: none; }
+}

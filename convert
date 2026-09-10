@@ -1,0 +1,4 @@
+#!/bin/sh
+# Convert iPhone HEIC photos to JPEG. Pass --dry-run to preview.
+cd "$(dirname "$0")" || exit 1
+exec python3 convert.py "$@"

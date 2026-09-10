@@ -1,0 +1,6 @@
+.DS_Store
+*.pyc
+__pycache__/
+
+# Untouched HEIC originals from ./convert — big, and not needed by the site.
+photos/_heic-originals/

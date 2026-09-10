@@ -1,0 +1,4 @@
+#!/bin/sh
+# Re-index the photos/ folder. Run this after adding or renaming any photo.
+cd "$(dirname "$0")" || exit 1
+exec python3 update.py "$@"
