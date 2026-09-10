@@ -40,22 +40,22 @@ window.SITE = {
     {
       id: "iisc-uav",
       title: "IISc UAV Research",
-      blurb: "I worked on a drone built to inspect pipelines."
+      blurb: "30 days with IISc's head of aerospace engineering, ex-UCLA, researching where UAVs actually get used."
     },
     {
       id: "robotics",
       title: "Robotics",
-      blurb: "Competition builds for MakeX and FIRST LEGO League."
+      blurb: "Our final build was held together with zip ties and cardboard."
     },
     {
       id: "mun",
       title: "MUN",
-      blurb: "Delegate in committee, and logistics behind the scenes."
+      blurb: "I take the most controversial stance available, then end up criticising the whole committee."
     },
     {
       id: "worlds-scholars-cup",
       title: "World Scholar's Cup",
-      blurb: "Debate and quiz rounds, up to the Tournament of Champions at Yale."
+      blurb: "Sixteen hours of flying to get there."
     },
     {
       id: "instilt-educate",
@@ -65,57 +65,57 @@ window.SITE = {
     {
       id: "esports",
       title: "Modern Esports Club",
-      blurb: "I started the club and ran its tournaments."
+      blurb: "Over 150 signups, enough that we had to filter out beginners. A DEF partnership fell through when the region got unstable."
     },
     {
       id: "sarsan-aviation",
       title: "Sarsan Aviation Academy",
-      blurb: "Time in the hangar, mostly around turbojets."
+      blurb: "The turbojet came off a decommissioned Russian air force aircraft."
     },
     {
       id: "odoo-erp",
       title: "Odoo ERP",
-      blurb: "Consulting work on ERP systems."
+      blurb: "Spent every break and lunch playing FIFA against the employees."
     },
     {
       id: "duke-of-edinburgh",
       title: "Duke of Edinburgh",
-      blurb: "Bronze award. The 24 km trek was the hard part."
+      blurb: "Trekked in 40°C heat. Several people around me passed out."
     },
     {
       id: "abwa-mathematics",
       title: "ABWA Infinity Mathematics",
-      blurb: "Made it to the international final."
+      blurb: "My first time back in Mumbai, the city I was born in."
     },
     {
       id: "plane-spotting",
       title: "Plane Spotting",
-      blurb: "I can name most aircraft from the silhouette."
+      blurb: "I can name a plane from a glance at almost any part of it."
     },
     {
       id: "pc-setup",
       title: "PC & Setup",
-      blurb: "Machines I've built, and the desk they sit on."
+      blurb: "Two days building the whole rig, just me and my dad."
     },
     {
       id: "gaming",
       title: "Gaming",
-      blurb: "Where a lot of my free time goes."
+      blurb: "Top 0.5% in Clash by trophies, top 0.1% ranked in Fortnite, and a top-50 finish in a regional duos cup."
     },
     {
       id: "pool",
       title: "Pool",
-      blurb: "Still working on the long shots."
+      blurb: "Undisputed king of scratching on the 8 ball."
     },
     {
       id: "gym",
       title: "Gym & Fitness",
-      blurb: "Showing up, most days."
+      blurb: "Started out severely underweight. Now I bench 15 kg over my bodyweight."
     },
     {
       id: "perfume",
       title: "Perfume",
-      blurb: "A collection that keeps growing. The chemistry is half the fun."
+      blurb: "Started with one gift. It's over 20 now, and I can name the notes in every one."
     }
   ],
 
